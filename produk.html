@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produk UMKM</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { text-align: center; padding: 20px; background-color: #4CAF50; color: white; }
+    .search-box { text-align: center; margin: 20px; }
+    .search-box input { width: 80%; max-width: 400px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; }
+
+    .container { display: flex; gap: 20px; padding: 20px; }
+    .produk-container { flex: 3; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .produk { border: 1px solid #ddd; border-radius: 10px; padding: 10px; width: 220px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .produk img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+    .produk p { font-size: 14px; margin: 5px 0; }
+    .produk button { margin-top: 10px; padding: 8px 12px; border: none; background: #4CAF50; color: white; border-radius: 5px; cursor: pointer; }
+    .produk button:hover { background: #45a049; }
+
+    /* Keranjang */
+    .cart { flex: 1; border: 1px solid #ddd; border-radius: 10px; padding: 15px; background: #f9f9f9; max-height: 500px; overflow-y: auto; }
+    .cart h2 { margin-top: 0; text-align: center; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #ddd; }
+    .cart-item button { background: red; border: none; color: white; padding: 5px 8px; cursor: pointer; border-radius: 4px; }
+    .cart-total { margin-top: 10px; font-weight: bold; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Daftar Produk UMKM</h1>
+  </header>
+
+  <!-- Search Box -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Cari produk...">
+  </div>
+
+  <div class="container">
+    <!-- Produk List -->
+    <div class="produk-container" id="produkList">
+      <div class="produk">
+        <img src="images/produk1.jpeg" alt="Keripik Tempe">
+        <h3>Keripik Tempe</h3>
+        <p>Rp 15.000</p>
+        <p>Keripik tempe renyah khas Jombang, cocok untuk camilan.</p>
+        <button onclick="addToCart('Keripik Tempe', 15000, 'Keripik tempe renyah khas Jombang')">Tambah ke Keranjang</button>
+      </div>
+      <div class="produk">
+        <img src="images/produk2.jpeg" alt="Lempeng Singkong">
+        <h3>Lempeng Singkong</h3>
+        <p>Rp 12.000</p>
+        <p>Lempeng gurih berbahan singkong pilihan, cocok untuk santai.</p>
+        <button onclick="addToCart('Lempeng Singkong', 12000, 'Lempeng gurih berbahan singkong pilihan')">Tambah ke Keranjang</button>
+      </div>
+      <div class="produk">
+        <img src="images/produk3.jpeg" alt="Brem Jombang">
+        <h3>Brem Jombang</h3>
+        <p>Rp 20.000</p>
+        <p>Brem khas Jombang yang legit dan manis, oleh-oleh favorit.</p>
+        <button onclick="addToCart('Brem Jombang', 20000, 'Brem khas Jombang yang legit dan manis')">Tambah ke Keranjang</button>
+      </div>
+    </div>
+
+    <!-- Keranjang -->
+    <div class="cart" id="cart">
+      <h2>Keranjang</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total" id="cartTotal">Total: Rp 0</div>
+    </div>
+  </div>
+
+  <script>
+    // Fitur Search
+    const searchInput = document.getElementById("searchInput");
+    const produkList = document.getElementById("produkList");
+    const produkItems = produkList.getElementsByClassName("produk");
+
+    searchInput.addEventListener("keyup", function() {
+      const filter = searchInput.value.toLowerCase();
+      for (let i = 0; i < produkItems.length; i++) {
+        const namaProduk = produkItems[i].getElementsByTagName("h3")[0];
+        if (namaProduk) {
+          const textValue = namaProduk.textContent || namaProduk.innerText;
+          produkItems[i].style.display =
+            textValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+        }
+      }
+    });
+
+    // Fitur Keranjang
+    let cart = [];
+
+    function addToCart(nama, harga, deskripsi) {
+      cart.push({ nama, harga, deskripsi });
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function renderCart() {
+      const cartItemsDiv = document.getElementById("cartItems");
+      const cartTotalDiv = document.getElementById("cartTotal");
+      cartItemsDiv.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        total += item.harga;
+        cartItemsDiv.innerHTML += `
+          <div class="cart-item">
+            <div>
+              <strong>${item.nama}</strong><br>
+              <small>${item.deskripsi}</small><br>
+              Rp ${item.harga.toLocaleString()}
+            </div>
+            <button onclick="removeFromCart(${index})">Hapus</button>
+          </div>
+        `;
+      });
+
+      cartTotalDiv.innerText = `Total (${cart.length} barang): Rp ${total.toLocaleString()}`;
+    }
+  </script>
+</body>
+</html>
